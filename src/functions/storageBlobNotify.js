@@ -25,7 +25,8 @@ app.storageBlob("storageBlobNotify", {
     handler: async (blob, context) => {
         context.log(`Blob trigger processing: ${context.triggerMetadata.name}  with size ${blob.length} bytes`);
         const connectionString = process.env["AzureWebJobsStorage"];
-        const containerName = process.env["containerName"]; //cust-docs
+        //const containerName = process.env["containerName"]; //cust-docs
+        const containerName = "cust-docs";
         const blobName = context.triggerMetadata.name;
         if (!connectionString) {
             context.error("673061_STORAGE connection string is not set.");
