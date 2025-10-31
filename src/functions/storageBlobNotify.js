@@ -19,7 +19,7 @@ app.storageBlob('storageBlobNotify', {
 */
 
 app.storageBlob("storageBlobNotify", {
-    path: `${process.env["containerName"]}/{name}`, 
+    path: "cust-docs/{name}", 
     connection: 'AzureWebJobsStorage',
     extraOutputs: [queueOutput],
     handler: async (blob, context) => {
