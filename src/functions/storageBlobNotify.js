@@ -8,15 +8,6 @@ const queueOutput = output.storageQueue({
     connection: 'AzureWebJobsStorage'
 });
 
-/*
-app.storageBlob('storageBlobNotify', {
-    path: 'cust-docs',
-    connection: '673061_STORAGE',
-    handler: (blob, context) => {  
-        context.log(`Storage blob function processed blob "${context.triggerMetadata.name}" with size ${blob.length} bytes`);
-    }
-});
-*/
 
 app.storageBlob("storageBlobNotify", {
     path: "cust-docs/{name}", 
@@ -29,7 +20,7 @@ app.storageBlob("storageBlobNotify", {
         const containerName = "cust-docs";
         const blobName = context.triggerMetadata.name;
         if (!connectionString) {
-            context.error("673061_STORAGE connection string is not set.");
+            context.error(" connection string is not set.");
             return;
         }
 
