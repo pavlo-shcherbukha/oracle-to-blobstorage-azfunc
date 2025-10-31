@@ -78,4 +78,6 @@ jobs:
           app-name: 'f-blb-app'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          remote-build: true
+
           
