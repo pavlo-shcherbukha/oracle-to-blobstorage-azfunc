@@ -66,7 +66,7 @@ app.eventGrid('eventGridTrigger1', {
             const queueData = {
                 blobName: blobName,
                 containerName: containerName,
-                contentType: blobProperties.contentType,
+                contentType: eventData.contentType,
                 blobSize: eventData.contentLength, 
                 blobUrl: blobUrl
             };
