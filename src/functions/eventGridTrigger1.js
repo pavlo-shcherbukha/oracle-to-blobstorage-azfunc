@@ -1,5 +1,6 @@
-const { app } = require('@azure/functions');
+const { app, output } = require('@azure/functions');
 const { BlobServiceClient } = require('@azure/storage-blob');
+import "@azure/functions-extensions-blob";
 const { DefaultAzureCredential } = require('@azure/identity');
 const { URL } = require('url');
 
@@ -61,7 +62,7 @@ app.eventGrid('eventGridTrigger1', {
             context.log('--- Додаткові властивості Blob (через SDK) ---');
             context.log(`Кастомні метадани: ${JSON.stringify(properties.metadata)}`);
             context.log(`ETag: ${properties.etag}`);
-
+            
             const queueData = {
                 blobName: blobName,
                 containerName: containerName,
@@ -72,7 +73,7 @@ app.eventGrid('eventGridTrigger1', {
 
             context.extraOutputs.set( queueOutput, queueData);
             context.log(`Message sent to blob-processing-queue: ${JSON.stringify(queueData)}`);
-
+            
         } catch (error) {
             context.error('Помилка під час доступу до Azure Storage за допомогою SDK:', error);
             // У V4 помилки викидаються, щоб хост їх зафіксував
