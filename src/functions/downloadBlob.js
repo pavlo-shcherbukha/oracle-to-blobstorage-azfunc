@@ -14,7 +14,7 @@ app.http('downloadBlob', {
         }
 
         const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AzureWebJobsStorage);
-        const containerName = 'cust-docs';
+        const containerName = 'cust-doc';
         const containerClient = blobServiceClient.getContainerClient(containerName);
 
         const blockBlobClient = containerClient.getBlockBlobClient(fileName);
