@@ -10,10 +10,13 @@ app.eventGrid('eventGridTrigger1', {
     handler:  async (event, context) => {
         context.log('Event grid function processed event:', event);
         context.log('--- Функція eventGridTrigger1 (V4) викликана Event Grid ---');
+         
+        // Перевірка типу події  eventType
+        //if (event.type !== "Microsoft.Storage.BlobCreated") {
+        if ( eventType !== 'Microsoft.Storage.BlobCreated' ){
 
-        // Перевірка типу події
-        if (event.type !== "Microsoft.Storage.BlobCreated") {
-            context.log(`Пропущено подію типу: ${event.type}`);
+            //context.log(`Пропущено подію типу: ${event.type}`);
+            context.log(`Пропущено подію типу: ${eventType}`);
             return;
         }
 
