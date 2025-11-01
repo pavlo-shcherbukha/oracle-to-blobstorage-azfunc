@@ -1,8 +1,8 @@
-const { app, output } = require('@azure/functions');
-const { BlobServiceClient } = require('@azure/storage-blob');
+import { app, output }  from '@azure/functions';
+import { BlobServiceClient } from '@azure/storage-blob';
 import "@azure/functions-extensions-blob";
-const { DefaultAzureCredential } = require('@azure/identity');
-const { URL } = require('url');
+import { DefaultAzureCredential }  from '@azure/identity';
+import { URL }  from 'url';
 
 // Використовуйте Managed Identity (DefaultAzureCredential)
 const credential = new DefaultAzureCredential();
