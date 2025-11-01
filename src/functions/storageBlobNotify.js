@@ -10,14 +10,14 @@ const queueOutput = output.storageQueue({
 
 
 app.storageBlob("storageBlobNotify", {
-    path: "cust-docs/{name}", 
+    path: "cust-doc/{name}", 
     connection: 'AzureWebJobsStorage',
     extraOutputs: [queueOutput],
     handler: async (blob, context) => {
         context.log(`Blob trigger processing: ${context.triggerMetadata.name}  with size ${blob.length} bytes`);
         const connectionString = process.env["AzureWebJobsStorage"];
         //const containerName = process.env["containerName"]; //cust-docs
-        const containerName = "cust-docs";
+        const containerName = "cust-doc";
         const blobName = context.triggerMetadata.name;
         if (!connectionString) {
             context.error(" connection string is not set.");
