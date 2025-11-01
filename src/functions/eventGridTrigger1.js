@@ -13,10 +13,10 @@ app.eventGrid('eventGridTrigger1', {
          
         // Перевірка типу події  eventType
         //if (event.type !== "Microsoft.Storage.BlobCreated") {
-        if ( eventType !== 'Microsoft.Storage.BlobCreated' ){
+        if ( event.eventType !== 'Microsoft.Storage.BlobCreated' ){
 
             //context.log(`Пропущено подію типу: ${event.type}`);
-            context.log(`Пропущено подію типу: ${eventType}`);
+            context.log(`Пропущено подію типу: ${event.eventType}`);
             return;
         }
 
