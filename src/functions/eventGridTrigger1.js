@@ -5,8 +5,13 @@ const { URL } = require('url');
 
 // Використовуйте Managed Identity (DefaultAzureCredential)
 const credential = new DefaultAzureCredential();
+const queueOutput = output.storageQueue({
+    queueName: 'blob-processing-queue',
+    connection: 'AzureWebJobsStorage'
+});
 
 app.eventGrid('eventGridTrigger1', {
+    extraOutputs: [queueOutput],
     handler:  async (event, context) => {
         context.log('Event grid function processed event:', event);
         context.log('--- Функція eventGridTrigger1 (V4) викликана Event Grid ---');
@@ -44,6 +49,7 @@ app.eventGrid('eventGridTrigger1', {
         context.log(`Ім'я контейнера: ${containerName}`);
         context.log(`Ім'я Blob: ${blobName}`);
 
+
         // 2. Підключення до сховища та читання метаданих
         try {
             const blobServiceClient = new BlobServiceClient(storageAccountUrl, credential);
@@ -55,6 +61,17 @@ app.eventGrid('eventGridTrigger1', {
             context.log('--- Додаткові властивості Blob (через SDK) ---');
             context.log(`Кастомні метадани: ${JSON.stringify(properties.metadata)}`);
             context.log(`ETag: ${properties.etag}`);
+
+            const queueData = {
+                blobName: blobName,
+                containerName: containerName,
+                contentType: blobProperties.contentType,
+                blobSize: eventData.contentLength, 
+                blobUrl: blobUrl
+            };
+
+            context.extraOutputs.set( queueOutput, queueData);
+            context.log(`Message sent to blob-processing-queue: ${JSON.stringify(queueData)}`);
 
         } catch (error) {
             context.error('Помилка під час доступу до Azure Storage за допомогою SDK:', error);
