@@ -68,7 +68,8 @@ app.eventGrid('eventGridTrigger1', {
                 containerName: containerName,
                 contentType: eventData.contentType,
                 blobSize: eventData.contentLength, 
-                blobUrl: blobUrl
+                blobUrl: blobUrl,
+                customMetadata: properties.metadata || {}
             };
 
             context.extraOutputs.set( queueOutput, queueData);
