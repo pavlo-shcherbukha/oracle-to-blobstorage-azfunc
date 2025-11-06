@@ -6,9 +6,6 @@ app.http('ListBlobs', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-
-
-        // Підключення до локального емулятора
         const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AzureWebJobsStorage);
         const containerName = 'cust-doc';
         const containerClient = blobServiceClient.getContainerClient(containerName);
@@ -22,9 +19,6 @@ app.http('ListBlobs', {
                 context.log(`Blob ${i++}: ${blob.name}`);
                 blobList.push({"name": blob.name, "length": blob.properties.contentLengthm, "contentType": blob.properties.contentType, "createdOn": blob.properties.createdOn, "lastModified": blob.properties.lastModified });
         }
-
-
-
         return { status: 200, jsonBody: { ok: true,  fileList: blobList }};
     }
 });
