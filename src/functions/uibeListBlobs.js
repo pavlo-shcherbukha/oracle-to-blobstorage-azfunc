@@ -2,7 +2,7 @@ import { app } from "@azure/functions";
 import { BlobServiceClient } from "@azure/storage-blob";
 
 
-app.http('ListBlobs', {
+app.http('uibeListBlobs', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: async (request, context) => {

@@ -4,7 +4,7 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import "@azure/functions-extensions-blob";
 
 
-app.http('downloadBlob', {
+app.http('uibeDownloadBlob', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
