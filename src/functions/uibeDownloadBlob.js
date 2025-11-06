@@ -1,8 +1,6 @@
-
 import { app } from "@azure/functions"
 import { BlobServiceClient } from "@azure/storage-blob";
 import "@azure/functions-extensions-blob";
-
 
 app.http('uibeDownloadBlob', {
     methods: ['GET'],
@@ -18,13 +16,19 @@ app.http('uibeDownloadBlob', {
         const containerClient = blobServiceClient.getContainerClient(containerName);
 
         const blockBlobClient = containerClient.getBlockBlobClient(fileName);
+        const blobProperties = await blockBlobClient.getProperties();
         const downloadBlockBlobResponse = await blockBlobClient.download();
         const downloaded = await streamToBuffer(downloadBlockBlobResponse.readableStreamBody);
+        const contentType = blobProperties.contentType || 'application/octet-stream';
+        const contentDisposition = `attachment; filename="${fileName}"`;
 
         return {
             status: 200,
             body: downloaded,
-            headers: { 'Content-Type': 'application/octet-stream' }
+            headers: { 
+                'Content-Type': contentType,
+                'Content-Disposition': contentDisposition 
+            }
         };
     }
 });
