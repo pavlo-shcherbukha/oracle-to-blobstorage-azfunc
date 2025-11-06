@@ -7,7 +7,7 @@ app.http("health", {
         context.log("HTTP function health  triggered successfully!");
         return { 
             status: 200, 
-            body: {
+            jsonBody: {
                 "ok": true,
                 "message": "Azure Functions (Node.js V4) is working!"
             } 
