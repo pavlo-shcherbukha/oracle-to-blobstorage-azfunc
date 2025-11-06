@@ -4,7 +4,6 @@ import "@azure/functions-extensions-blob";
 import { DefaultAzureCredential }  from '@azure/identity';
 import { URL }  from 'url';
 
-// Використовуйте Managed Identity (DefaultAzureCredential)
 const credential = new DefaultAzureCredential();
 const queueOutput = output.storageQueue({
     queueName: 'blob-processing-queue',
@@ -15,54 +14,55 @@ app.eventGrid('eventGridTrigger1', {
     extraOutputs: [queueOutput],
     handler:  async (event, context) => {
         context.log('Event grid function processed event:', event);
-        context.log('--- Функція eventGridTrigger1 (V4) викликана Event Grid ---');
+        context.log('--- Function eventGridTrigger1 (V4) is trigered by Event Grid ---');
          
-        // Перевірка типу події  eventType
-        //if (event.type !== "Microsoft.Storage.BlobCreated") {
+        // Check is eventType is BlobCreated
         if ( event.eventType !== 'Microsoft.Storage.BlobCreated' ){
-
-            //context.log(`Пропущено подію типу: ${event.type}`);
-            context.log(`Пропущено подію типу: ${event.eventType}`);
+            context.log(`Skip Event Type: ${event.eventType}`);
             return;
         }
 
-        // Об'єкт 'data' містить метадані blob
+        // Read inforamtion about the created blob and parse it
         const eventData = event.data;
 
         const blobUrl = eventData.url;
-        context.log(`URL-адреса нового Blob: ${blobUrl}`);
-        context.log(`Тип вмісту: ${eventData.contentType}`);
-        context.log(`Розмір (байти): ${eventData.contentLength}`);
+        context.log(`URL-addres of the new Blob: ${blobUrl}`);
+        context.log(`Content type: ${eventData.contentType}`);
+        context.log(`Length (bytes): ${eventData.contentLength}`);
 
-        // 1. Аналіз URL-адреси
+        // 1. Parse URL-address
         const url = new URL(blobUrl);
         const pathParts = url.pathname.split('/').filter(p => p);
 
         if (pathParts.length < 2) {
-            context.error("Недійсний шлях blob.");
+            context.error("Wrong  blob path.");
             return;
         }
 
+        // separate  blob container name and blob name
         const containerName = pathParts[0];
         const blobName = pathParts.slice(1).join('/');
         const storageAccountUrl = url.origin;
 
-        context.log(`Ім'я контейнера: ${containerName}`);
-        context.log(`Ім'я Blob: ${blobName}`);
+        context.log(`Container name: ${containerName}`);
+        context.log(`Blob name: ${blobName}`);
 
 
-        // 2. Підключення до сховища та читання метаданих
+        // 2. Connect to Azure Storage using Azure Identity and get custom blob metadata via 
+        // Azure Storage Blob SDK
         try {
+            // 2.1. Create BlobService Client
             const blobServiceClient = new BlobServiceClient(storageAccountUrl, credential);
             const containerClient = blobServiceClient.getContainerClient(containerName);
             const blobClient = containerClient.getBlobClient(blobName);
 
-            // Отримання властивостей (включаючи кастомні метадані)
+            // 2.2. Get Blob properties
             const properties = await blobClient.getProperties();
-            context.log('--- Додаткові властивості Blob (через SDK) ---');
-            context.log(`Кастомні метадани: ${JSON.stringify(properties.metadata)}`);
+            context.log('--- Get Blob properties (via SDK) ---');
+            context.log(`Custom metadata: ${JSON.stringify(properties.metadata)}`);
             context.log(`ETag: ${properties.etag}`);
             
+            // 3. Create message for Storage Queue
             const queueData = {
                 blobName: blobName,
                 containerName: containerName,
@@ -71,17 +71,16 @@ app.eventGrid('eventGridTrigger1', {
                 blobUrl: blobUrl,
                 customMetadata: properties.metadata || {}
             };
-
+            //4. Publish message to Storage Queue
             context.extraOutputs.set( queueOutput, queueData);
             context.log(`Message sent to blob-processing-queue: ${JSON.stringify(queueData)}`);
             
         } catch (error) {
-            context.error('Помилка під час доступу до Azure Storage за допомогою SDK:', error);
-            // У V4 помилки викидаються, щоб хост їх зафіксував
-            throw error; 
+            context.error('Error Access  Azure Storage via SDK:', error);
+              throw error; 
         }
 
-        context.log('--- Функція завершила виконання ---');
+        context.log('--- Finaly ENDUP ---');
 
         
     }
