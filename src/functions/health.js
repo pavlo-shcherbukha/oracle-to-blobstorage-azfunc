@@ -1,6 +1,6 @@
 import { app } from "@azure/functions";
 
-app.http("httpTrigger", {
+app.http("health", {
     methods: ["GET"],
     authLevel: "anonymous", 
     handler: async (request, context) => {
