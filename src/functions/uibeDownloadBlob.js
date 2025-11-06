@@ -29,7 +29,7 @@ app.http('uibeDownloadBlob', {
     }
 });
 
-// Допоміжна функція для читання потоку у Buffer
+// Helper function to read a stream into a Buffer
 async function streamToBuffer(readableStream) {
     return new Promise((resolve, reject) => {
         const chunks = [];
